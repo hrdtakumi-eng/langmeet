@@ -1,4 +1,5 @@
 import { supabase, type DbEvent } from "@/lib/supabase";
+import JoinButton from "./JoinButton";
 
 function isFull(current: number, max: number) {
   return current >= max;
@@ -124,16 +125,7 @@ export default async function EventsPage() {
                       </div>
                     </div>
 
-                    <button
-                      disabled={full}
-                      className={`shrink-0 px-5 py-2 rounded-lg text-sm font-semibold transition ${
-                        full
-                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                          : "bg-blue-600 text-white hover:bg-blue-700"
-                      }`}
-                    >
-                      {full ? "満員" : "参加する"}
-                    </button>
+                    <JoinButton eventId={event.id} full={full} />
                   </div>
                 </div>
               );
