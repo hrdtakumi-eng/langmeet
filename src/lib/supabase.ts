@@ -10,6 +10,7 @@ export type DbEvent = {
   participants_max: number;
   participants_current: number;
   description: string;
+  image_url: string | null;
   created_at: string;
 };
 

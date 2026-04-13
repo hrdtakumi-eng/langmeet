@@ -1,15 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
 type LocationType = "offline" | "online";
+
+const supabase = createSupabaseBrowserClient();
 
 export default function NewEventPage() {
   const [locationType, setLocationType] = useState<LocationType>("offline");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setError("画像は5MB以内にしてください。");
+      return;
+    }
+    setError(null);
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
+
+  function removeImage() {
+    setImageFile(null);
+    setImagePreview(null);
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -18,6 +39,30 @@ export default function NewEventPage() {
 
     const data = new FormData(e.currentTarget);
 
+    // 画像アップロード
+    let imageUrl: string | null = null;
+    if (imageFile) {
+      const ext = imageFile.name.split(".").pop();
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("event-images")
+        .upload(filename, imageFile, { cacheControl: "3600" });
+
+      if (uploadError) {
+        setError(`画像のアップロードに失敗しました: ${uploadError.message}`);
+        setLoading(false);
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("event-images")
+        .getPublicUrl(uploadData.path);
+
+      imageUrl = publicUrl;
+    }
+
+    // イベント保存
     const { error: sbError } = await supabase.from("events").insert({
       name: data.get("name") as string,
       name_en: data.get("name_en") as string,
@@ -28,13 +73,13 @@ export default function NewEventPage() {
       participants_max: parseInt(data.get("participants_max") as string, 10),
       participants_current: 0,
       description: data.get("description") as string,
+      image_url: imageUrl,
     });
 
     setLoading(false);
 
     if (sbError) {
       setError(`保存に失敗しました: ${sbError.message}`);
-      console.error("Supabase error:", sbError);
     } else {
       setSubmitted(true);
     }
@@ -59,7 +104,7 @@ export default function NewEventPage() {
               イベント一覧へ
             </a>
             <button
-              onClick={() => setSubmitted(false)}
+              onClick={() => { setSubmitted(false); removeImage(); }}
               className="border border-blue-600 text-blue-600 px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-50 transition"
             >
               続けて投稿する
@@ -220,7 +265,42 @@ export default function NewEventPage() {
             />
           </div>
 
-          {/* Language badge preview */}
+          {/* 画像アップロード */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-gray-700">
+              イベント画像（任意）
+            </label>
+            {imagePreview ? (
+              <div className="relative rounded-xl overflow-hidden">
+                <img
+                  src={imagePreview}
+                  alt="プレビュー"
+                  className="w-full h-52 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-700 rounded-full w-8 h-8 flex items-center justify-center shadow text-sm transition"
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
+                <span className="text-3xl mb-2">📷</span>
+                <span className="text-sm text-gray-500 font-medium">クリックして画像を選択</span>
+                <span className="text-xs text-gray-400 mt-1">JPG・PNG・WebP / 5MB以内</span>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+              </label>
+            )}
+          </div>
+
+          {/* Language badge */}
           <div className="flex items-center gap-2 bg-blue-50 rounded-xl px-4 py-3">
             <span className="text-sm text-gray-600">言語：</span>
             <span className="bg-blue-100 text-blue-700 text-sm font-semibold px-3 py-1 rounded-full">
