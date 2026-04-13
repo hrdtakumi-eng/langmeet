@@ -30,11 +30,12 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // /events/new は要ログイン
-  if (!user && request.nextUrl.pathname === "/events/new") {
+  // 要ログインページ
+  const protectedPaths = ["/events/new", "/mypage"];
+  if (!user && protectedPaths.includes(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone();
+    url.searchParams.set("next", request.nextUrl.pathname);
     url.pathname = "/auth/login";
-    url.searchParams.set("next", "/events/new");
     return NextResponse.redirect(url);
   }
 
@@ -42,5 +43,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/events/new"],
+  matcher: ["/events/new", "/mypage"],
 };

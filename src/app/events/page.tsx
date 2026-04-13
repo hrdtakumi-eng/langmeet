@@ -1,4 +1,5 @@
-import { supabase, type DbEvent } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { type DbEvent } from "@/lib/supabase";
 import JoinButton from "./JoinButton";
 
 function isFull(current: number, max: number) {
@@ -16,10 +17,23 @@ function formatDate(dateStr: string) {
 }
 
 export default async function EventsPage() {
-  const { data: events, error } = await supabase
-    .from("events")
-    .select("*")
-    .order("date", { ascending: true });
+  const supabase = await createSupabaseServerClient();
+
+  const [{ data: events, error }, { data: { user } }] = await Promise.all([
+    supabase.from("events").select("*").order("date", { ascending: true }),
+    supabase.auth.getUser(),
+  ]);
+
+  // ログイン中なら参加済みイベントIDを取得
+  let joinedIds = new Set<string>();
+  if (user) {
+    const { data: participations } = await supabase
+      .from("participations")
+      .select("event_id");
+    joinedIds = new Set(
+      (participations ?? []).map((p) => (p as { event_id: string }).event_id)
+    );
+  }
 
   if (error) {
     return (
@@ -65,6 +79,7 @@ export default async function EventsPage() {
             {eventList.map((event) => {
               const full = isFull(event.participants_current, event.participants_max);
               const ratio = event.participants_current / event.participants_max;
+              const hasJoined = joinedIds.has(event.id);
 
               return (
                 <div
@@ -79,7 +94,6 @@ export default async function EventsPage() {
                       </h2>
                       <p className="text-sm text-gray-400 mt-0.5">{event.name_en}</p>
                     </div>
-                    {/* Language badge */}
                     <span className="shrink-0 bg-blue-100 text-blue-700 text-sm font-semibold px-3 py-1 rounded-full">
                       🇯🇵 日本語 ↔ English 🇺🇸
                     </span>
@@ -105,9 +119,7 @@ export default async function EventsPage() {
                     <div className="flex-1">
                       <div className="flex justify-between text-xs text-gray-500 mb-1">
                         <span>参加者</span>
-                        <span
-                          className={full ? "text-red-500 font-semibold" : ""}
-                        >
+                        <span className={full ? "text-red-500 font-semibold" : ""}>
                           {event.participants_current} / {event.participants_max}名
                         </span>
                       </div>
@@ -125,7 +137,11 @@ export default async function EventsPage() {
                       </div>
                     </div>
 
-                    <JoinButton eventId={event.id} full={full} />
+                    <JoinButton
+                      eventId={event.id}
+                      full={full}
+                      hasJoined={hasJoined}
+                    />
                   </div>
                 </div>
               );

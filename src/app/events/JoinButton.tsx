@@ -6,14 +6,15 @@ import { joinEvent } from "./actions";
 type Props = {
   eventId: string;
   full: boolean;
+  hasJoined: boolean;
 };
 
-export default function JoinButton({ eventId, full }: Props) {
+export default function JoinButton({ eventId, full, hasJoined }: Props) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [joined, setJoined] = useState(false);
+  const [joined, setJoined] = useState(hasJoined);
 
-  if (full) {
+  if (full && !joined) {
     return (
       <button
         disabled

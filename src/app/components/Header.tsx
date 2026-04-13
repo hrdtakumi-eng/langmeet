@@ -24,9 +24,12 @@ export default async function Header() {
 
           {user ? (
             <>
-              <span className="text-sm text-gray-400 hidden sm:block truncate max-w-[160px]">
-                {user.email}
-              </span>
+              <a
+                href="/mypage"
+                className="text-sm text-gray-600 hover:text-gray-900 transition"
+              >
+                マイページ
+              </a>
               <a
                 href="/events/new"
                 className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"

@@ -14,29 +14,20 @@ export async function joinEvent(eventId: string): Promise<{ error: string } | vo
     redirect("/auth/login?next=/events");
   }
 
-  // 現在の参加者数を取得（満員チェック）
-  const { data: event, error: fetchError } = await supabase
-    .from("events")
-    .select("participants_current, participants_max")
-    .eq("id", eventId)
-    .single();
-
-  if (fetchError || !event) {
-    return { error: "イベントが見つかりません。" };
-  }
-
-  if (event.participants_current >= event.participants_max) {
-    return { error: "満員です。" };
-  }
-
-  const { error } = await supabase
-    .from("events")
-    .update({ participants_current: event.participants_current + 1 })
-    .eq("id", eventId);
+  // RPC 関数でアトミックに処理（RLS・競合・重複参加をまとめてハンドリング）
+  const { data, error } = await supabase.rpc("join_event", {
+    p_event_id: eventId,
+  });
 
   if (error) {
-    return { error: "参加登録に失敗しました。" };
+    return { error: "参加登録に失敗しました。時間をおいて再度お試しください。" };
+  }
+
+  const result = data as { error?: string; success?: boolean };
+  if (result?.error) {
+    return { error: result.error };
   }
 
   revalidatePath("/events");
+  revalidatePath("/mypage");
 }
