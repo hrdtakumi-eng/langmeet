@@ -18,7 +18,7 @@ export default function JoinButton({ eventId, full, hasJoined }: Props) {
     return (
       <button
         disabled
-        className="shrink-0 px-5 py-2 rounded-lg text-sm font-semibold bg-gray-100 text-gray-400 cursor-not-allowed"
+        className="shrink-0 px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-400 cursor-not-allowed"
       >
         満員
       </button>
@@ -27,7 +27,7 @@ export default function JoinButton({ eventId, full, hasJoined }: Props) {
 
   if (joined) {
     return (
-      <span className="shrink-0 px-5 py-2 rounded-lg text-sm font-semibold bg-green-100 text-green-700">
+      <span className="shrink-0 px-5 py-2.5 rounded-xl text-sm font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
         参加済み ✓
       </span>
     );
@@ -51,7 +51,7 @@ export default function JoinButton({ eventId, full, hasJoined }: Props) {
       <button
         onClick={handleClick}
         disabled={pending}
-        className="shrink-0 px-5 py-2 rounded-lg text-sm font-semibold transition bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed"
+        className="shrink-0 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-blue-600 to-sky-500 text-white hover:from-blue-700 hover:to-sky-600 shadow-sm hover:shadow disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {pending ? "処理中..." : "参加する"}
       </button>

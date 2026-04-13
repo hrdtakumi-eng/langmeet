@@ -87,25 +87,25 @@ export default function NewEventPage() {
 
   if (submitted) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-        <div className="max-w-2xl mx-auto px-6 py-20 text-center">
+      <main className="min-h-screen flex items-center justify-center px-4">
+        <div className="max-w-md w-full text-center bg-white rounded-3xl shadow-sm border border-slate-100 px-8 py-14">
           <div className="text-5xl mb-6">🎉</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+          <h2 className="text-2xl font-extrabold text-gray-900 mb-3">
             イベントを投稿しました！
           </h2>
-          <p className="text-gray-500 mb-8">
+          <p className="text-slate-500 mb-8 text-sm leading-relaxed">
             イベントの審査後、一覧に掲載されます。
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex gap-3 justify-center">
             <a
               href="/events"
-              className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition"
+              className="bg-gradient-to-r from-blue-600 to-sky-500 text-white px-6 py-2.5 rounded-xl font-semibold hover:from-blue-700 hover:to-sky-600 transition-all shadow-sm text-sm"
             >
               イベント一覧へ
             </a>
             <button
               onClick={() => { setSubmitted(false); removeImage(); }}
-              className="border border-blue-600 text-blue-600 px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-50 transition"
+              className="border border-slate-200 text-slate-600 px-6 py-2.5 rounded-xl font-semibold hover:border-sky-300 hover:text-sky-600 transition-all text-sm"
             >
               続けて投稿する
             </button>
@@ -116,17 +116,17 @@ export default function NewEventPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <main className="min-h-screen">
       <div className="max-w-2xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-8">
-          <a href="/events" className="text-blue-600 text-sm hover:underline">
+          <a href="/events" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-blue-600 font-medium transition-colors">
             ← イベント一覧に戻る
           </a>
-          <h1 className="text-3xl font-bold text-gray-900 mt-3 mb-1">
+          <h1 className="text-3xl font-extrabold text-gray-900 mt-4 mb-1">
             イベントを作成
           </h1>
-          <p className="text-gray-500">
+          <p className="text-slate-500">
             言語交換イベントの情報を入力してください
           </p>
         </div>
@@ -134,7 +134,7 @@ export default function NewEventPage() {
         {/* Form Card */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col gap-6"
+          className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 flex flex-col gap-6"
         >
           {/* イベント名（日本語） */}
           <div className="flex flex-col gap-1.5">
@@ -146,7 +146,7 @@ export default function NewEventPage() {
               name="name"
               required
               placeholder="例：渋谷カフェで英会話"
-              className="border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              className="border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-400 transition bg-slate-50"
             />
           </div>
 
@@ -160,7 +160,7 @@ export default function NewEventPage() {
               name="name_en"
               required
               placeholder="e.g. English Conversation at Shibuya Café"
-              className="border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              className="border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-400 transition bg-slate-50"
             />
           </div>
 
@@ -174,7 +174,7 @@ export default function NewEventPage() {
                 type="date"
                 name="date"
                 required
-                className="border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-400 transition bg-slate-50"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -185,7 +185,7 @@ export default function NewEventPage() {
                 type="time"
                 name="time"
                 required
-                className="border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-400 transition bg-slate-50"
               />
             </div>
           </div>
@@ -201,10 +201,10 @@ export default function NewEventPage() {
                   key={type}
                   type="button"
                   onClick={() => setLocationType(type)}
-                  className={`flex-1 py-2.5 rounded-lg text-sm font-semibold border transition ${
+                  className={`flex-1 py-3 rounded-xl text-sm font-semibold border transition-all ${
                     locationType === type
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "bg-white text-gray-600 border-gray-200 hover:border-blue-400"
+                      ? "bg-gradient-to-r from-blue-600 to-sky-500 text-white border-transparent shadow-sm"
+                      : "bg-white text-slate-600 border-slate-200 hover:border-sky-300 hover:text-sky-600"
                   }`}
                 >
                   {type === "offline" ? "📍 オフライン" : "💻 オンライン"}
@@ -228,7 +228,7 @@ export default function NewEventPage() {
                   ? "例：渋谷区カフェスペース"
                   : "例：Zoom / Google Meet"
               }
-              className="border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              className="border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-400 transition bg-slate-50"
             />
           </div>
 
@@ -261,7 +261,7 @@ export default function NewEventPage() {
               required
               rows={4}
               placeholder="イベントの内容、対象レベル、持ち物などを記入してください。"
-              className="border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
+              className="border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-400 transition resize-none bg-slate-50"
             />
           </div>
 
@@ -319,7 +319,7 @@ export default function NewEventPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-base hover:bg-blue-700 active:scale-95 transition disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-blue-600 to-sky-500 text-white py-3.5 rounded-xl font-semibold text-sm hover:from-blue-700 hover:to-sky-600 transition-all shadow-sm hover:shadow disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? "投稿中..." : "イベントを投稿する"}
           </button>
